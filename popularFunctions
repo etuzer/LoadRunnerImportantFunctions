@@ -1,0 +1,143 @@
+Action()
+{
+	char test[100] = "Load";
+	char test_copy[100];
+	char y[100];
+    char *s = "1.1907";
+    int x=1;
+    int number; int i;
+    char *host; char *ip; char *master_host;
+    float fx;
+
+
+//  LoadRunner Functions 
+    
+//  lr_save_string(): As already seen, this function assigns a value to the LR parameter/variable.
+    
+    lr_save_string("Ergin Tüzer","save_string");
+    
+    
+//  lr_save_int(): This function assigns an integer to an LR parameter as shown below:
+
+	number=10;
+	lr_save_int(number,"numara_1");
+	lr_save_int(15,"numara_2");
+	
+//	lr_eval_string(): As already seen, this function returns the input string after evaluating any embedded parameters.
+
+	lr_output_message(lr_eval_string("{save_string}"));
+    lr_output_message(lr_eval_string("{numara_1}"));
+    lr_output_message(lr_eval_string("{numara_2}"));
+    	
+// lr_save_datetime(): This function saves the current date and time (or the date and time with the specified offset) into a parameter that can be used in our script as and when required.
+	
+	lr_save_datetime("Today’s date is %d %B %Y", DATE_NOW, "today");
+	lr_output_message(lr_eval_string("{today}"));
+	
+	
+	lr_save_datetime("Tomorrow's date is %d %B %Y", DATE_NOW, "tomorrow");
+	lr_output_message(lr_eval_string("{tomorrow}"));
+	
+	
+//  web_save_timestamp_param(): This function saves the current local timestamp of the computer running the script. This is a 13 digit number and the value is the number of milliseconds since midnight January 1st, 1970.
+
+	web_save_timestamp_param("currentTimeStamp", LAST );
+	lr_output_message(lr_eval_string("Timestamp: {currentTimeStamp}"));
+	
+	
+	
+//  web_reg_find(): As already seen, this function is used for text check.
+
+	// - Set up check for successful login by looking for "Welcome"
+	
+	    web_reg_find("Text=Welcome", LAST );
+		web_url("Step", "URL=...", LAST );
+		
+		
+	// - Set up check for successful login by looking for "Welcome" check
+	
+	    web_reg_find("Text=Welcome",
+	        "SaveCount=Welcome_Count",
+	        LAST );
+	
+	    web_url("Step", "URL=...", LAST );
+	    
+	// Check result
+	
+	    if (atoi(lr_eval_string("{Welcome_Count}")) > 0){
+        lr_output_message("Log on successful.");
+	        }
+	     else{
+	          lr_error_message("Log on failed");
+	          return(0);
+	     }
+		
+	// - In the following example, web_reg_find searches for the text string "Error." If the string is found, it fails and the script execution stops.
+		web_reg_find("Text/IC=Error", "Fail=Found", LAST );
+		web_url("Step", "URL=...", LAST );
+	
+	
+
+//  lr_think_time(): This function allows a Vuser to pause for a defined time between steps/actions on the VuGen script. This is to simulate the real user behavior of thinking for some time between actions/steps on an application.
+
+    lr_think_time(3);
+	
+	
+//	lr_get_vuser_ip(): This function returns the IPv4 address of a Vuser.
+//  lr_get_host_name(): This function returns the name of the machine executing the script.
+//  lr_get_master_host_name(): This function returns the name of the machine running the Controller.
+	
+	ip = lr_get_vuser_ip();
+	host = lr_get_host_name();
+	master_host = lr_get_master_host_name();
+	
+	lr_output_message("IP : %s", ip);
+	lr_output_message("Host : %s", host);
+	lr_output_message("Master Host : %s", master_host);
+	
+	
+	
+	
+// C Language Functions
+
+
+// atoi(): As already seen, this function converts a C string into a C integer
+
+  lr_save_string("1907", "prmCount");
+  lr_output_message("String value of prmCount: %s", lr_eval_string("{prmCount}"));
+
+  i = atoi(lr_eval_string("{prmCount}"));
+  lr_output_message("Integer value of prmCount: %d", i);
+
+
+// itoa(): This function converts a C integer to a C string
+
+  itoa(x,y,10);
+  lr_output_message("The string is: %s",y);
+
+	
+//	atof(): This function converts a C string into a C float.
+
+ fx = atof(s);
+ lr_output_message("The float: %.2f", fx);
+
+
+// strcpy(): This function copies one string to another.
+
+  strcpy(test_copy,"Load Runner 2022");
+  lr_output_message("The content in string is : %s", test_copy);
+
+
+// strlen(): This function returns the length of a string in bytes
+
+  lr_output_message("Length: %d",strlen(test));
+
+
+//strcat(): This function concatenates two strings.
+	
+  strcat(test," Runner");
+  lr_output_message("The final string is: %s",test);
+	
+  return 0;
+  
+}
